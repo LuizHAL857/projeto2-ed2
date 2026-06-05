@@ -3,6 +3,22 @@
 
 #include <stdbool.h>
 #include <lista.h>
+
+/*
+ * Módulo de grafo direcionado para representar o sistema viário da cidade.
+ *
+ * O grafo modela o mapa viário descrito no projeto: vértices representam
+ * extremos de segmentos de rua e arestas representam trechos orientados de
+ * circulação entre dois vértices. Cada aresta pode armazenar atributos
+ * associados ao trecho, como nome da rua, quadras laterais, comprimento e
+ * velocidade média.
+ *
+ * A implementação do módulo usa listas de adjacência, o que
+ * permite representar o grafo de forma dinâmica e eficiente para consultas 
+ *  inserção de trechos, buscas e algoritmos de caminhos mínimos.
+ */
+
+
 /** 
 * @brief Tipo opaco para representação de um grafo direcionado
 */
@@ -24,6 +40,13 @@ typedef void* Vertice;
 * @param n quantidade de vértices
  */
 Grafo criaGrafo(int n);
+
+/**
+ * @brief Libera toda a memória associada ao grafo
+ *
+ * @param grafo Grafo a ser liberado
+ */
+void liberaGrafo(Grafo grafo);
 
 /**
  * @brief Insere informações em um vértice
@@ -142,7 +165,7 @@ bool adjacentes(Grafo grafo, Vertice v1, Vertice v2);
  * 
  * @param grafo a ser analisado
  */
-Lista verticesAdjacentesListas(Grafo grafo);
+Lista verticesAdjacentesLista(Grafo grafo);
 
 
 #endif

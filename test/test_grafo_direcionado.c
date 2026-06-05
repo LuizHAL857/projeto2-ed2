@@ -17,6 +17,7 @@ void setUp(void) {
 }
 
 void tearDown(void) {
+    liberaGrafo(grafo);
     grafo = NULL;
     v1 = NULL;
     v2 = NULL;
@@ -97,6 +98,26 @@ void test_removeAresta_deve_impedir_nova_consulta_de_existencia_apos_remocao(voi
     TEST_ASSERT_FALSE(arestaExiste(grafo, v3, v4));
 }
 
+void test_liberaGrafo_deve_aceitar_grafo_com_vertices_e_arestas(void) {
+    Aresta aresta1 = insereAresta(grafo, v1, v2);
+    Aresta aresta2 = insereAresta(grafo, v2, v3);
+
+    TEST_ASSERT_NOT_NULL(aresta1);
+    TEST_ASSERT_NOT_NULL(aresta2);
+
+    setInfoAresta(grafo, aresta1, "Rua A", "qd1", "qd2", 10.0f, 5.0f);
+    setInfoAresta(grafo, aresta2, "Rua B", "qd3", "qd4", 20.0f, 6.0f);
+
+    liberaGrafo(grafo);
+    grafo = NULL;
+    v1 = NULL;
+    v2 = NULL;
+    v3 = NULL;
+    v4 = NULL;
+
+    TEST_ASSERT_TRUE(true);
+}
+
 
 int main(void) {
     UNITY_BEGIN();
@@ -108,6 +129,7 @@ int main(void) {
     RUN_TEST(test_removeAresta_deve_remover_apenas_o_sentido_informado);
     RUN_TEST(test_removeAresta_deve_retornar_false_quando_aresta_nao_existe);
     RUN_TEST(test_removeAresta_deve_impedir_nova_consulta_de_existencia_apos_remocao);
+    RUN_TEST(test_liberaGrafo_deve_aceitar_grafo_com_vertices_e_arestas);
 
     return UNITY_END();
 }

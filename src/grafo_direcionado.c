@@ -86,6 +86,24 @@ static void liberaAresta(stArestaImpl *aresta) {
     free(aresta);
 }
 
+static void liberaVertice(stVerticeImpl *vertice) {
+    Celula atualAresta;
+
+    if (vertice == NULL) {
+        return;
+    }
+
+    atualAresta = getInicioLista(vertice->arestasSaida);
+    while (atualAresta != NULL) {
+        stArestaImpl *aresta = getConteudoCelula(atualAresta);
+        liberaAresta(aresta);
+        atualAresta = getProxCelula(atualAresta);
+    }
+
+    liberaLista(vertice->arestasSaida);
+    free(vertice);
+}
+
 static bool contemVerticeNaLista(Lista lista, Vertice vertice) {
     Celula atual;
 
@@ -126,6 +144,25 @@ Grafo criaGrafo(int n) {
     grafo->quantidadeVertices = 0;
 
     return grafo;
+}
+
+void liberaGrafo(Grafo grafo) {
+    stGrafoImpl *grafoImpl = grafo;
+    Celula atualVertice;
+
+    if (grafoImpl == NULL) {
+        return;
+    }
+
+    atualVertice = getInicioLista(grafoImpl->vertices);
+    while (atualVertice != NULL) {
+        stVerticeImpl *vertice = getConteudoCelula(atualVertice);
+        liberaVertice(vertice);
+        atualVertice = getProxCelula(atualVertice);
+    }
+
+    liberaLista(grafoImpl->vertices);
+    free(grafoImpl);
 }
 
 Vertice infoVertice(Grafo grafo, int id, float x, float y) {
@@ -352,4 +389,3 @@ Lista verticesAdjacentesLista(Grafo grafo) {
 
     return adjacentes;
 }
-
