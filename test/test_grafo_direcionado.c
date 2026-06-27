@@ -10,10 +10,10 @@ static Vertice v4;
 
 void setUp(void) {
     grafo = criaGrafo(4);
-    v1 = infoVertice(grafo, 1, 10.0f, 20.0f);
-    v2 = infoVertice(grafo, 2, 30.0f, 40.0f);
-    v3 = infoVertice(grafo, 3, 50.0f, 60.0f);
-    v4 = infoVertice(grafo, 4, 70.0f, 80.0f);
+    v1 = infoVertice(grafo, "v1", 10.0f, 20.0f);
+    v2 = infoVertice(grafo, "v2", 30.0f, 40.0f);
+    v3 = infoVertice(grafo, "v3", 50.0f, 60.0f);
+    v4 = infoVertice(grafo, "v4", 70.0f, 80.0f);
 }
 
 void tearDown(void) {
@@ -31,6 +31,9 @@ void test_criaGrafo_e_infoVertice_devem_retornar_ponteiros_validos(void) {
     TEST_ASSERT_NOT_NULL(v2);
     TEST_ASSERT_NOT_NULL(v3);
     TEST_ASSERT_NOT_NULL(v4);
+    TEST_ASSERT_EQUAL_STRING("v1", getIdVertice(v1));
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 10.0f, getXVertice(v1));
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 20.0f, getYVertice(v1));
 }
 
 void test_arestaExiste_deve_retornar_false_quando_aresta_ainda_nao_foi_inserida(void) {

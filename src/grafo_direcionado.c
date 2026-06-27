@@ -17,7 +17,7 @@ struct stArestaImpl {
 };
 
 struct stVerticeImpl {
-    int id;
+    char *id;
     float x;
     float y;
     Lista arestasSaida;
@@ -101,6 +101,7 @@ static void liberaVertice(stVerticeImpl *vertice) {
     }
 
     liberaLista(vertice->arestasSaida);
+    free(vertice->id);
     free(vertice);
 }
 
@@ -165,11 +166,12 @@ void liberaGrafo(Grafo grafo) {
     free(grafoImpl);
 }
 
-Vertice infoVertice(Grafo grafo, int id, float x, float y) {
+Vertice infoVertice(Grafo grafo, const char *id, float x, float y) {
     stGrafoImpl *grafoImpl = grafo;
     stVerticeImpl *vertice;
 
-    if (grafoImpl == NULL || grafoImpl->quantidadeVertices >= grafoImpl->capacidadeVertices) {
+    if (grafoImpl == NULL || id == NULL || id[0] == '\0' ||
+        grafoImpl->quantidadeVertices >= grafoImpl->capacidadeVertices) {
         return NULL;
     }
 
@@ -178,12 +180,18 @@ Vertice infoVertice(Grafo grafo, int id, float x, float y) {
         return NULL;
     }
 
-    vertice->id = id;
+    vertice->id = copiaString(id);
+    if (vertice->id == NULL) {
+        free(vertice);
+        return NULL;
+    }
+
     vertice->x = x;
     vertice->y = y;
     vertice->arestasSaida = criaLista();
 
     if (vertice->arestasSaida == NULL) {
+        free(vertice->id);
         free(vertice);
         return NULL;
     }
@@ -192,6 +200,36 @@ Vertice infoVertice(Grafo grafo, int id, float x, float y) {
     grafoImpl->quantidadeVertices++;
 
     return vertice;
+}
+
+char *getIdVertice(Vertice vertice) {
+    stVerticeImpl *verticeImpl = vertice;
+
+    if (verticeImpl == NULL) {
+        return NULL;
+    }
+
+    return verticeImpl->id;
+}
+
+float getXVertice(Vertice vertice) {
+    stVerticeImpl *verticeImpl = vertice;
+
+    if (verticeImpl == NULL) {
+        return 0.0f;
+    }
+
+    return verticeImpl->x;
+}
+
+float getYVertice(Vertice vertice) {
+    stVerticeImpl *verticeImpl = vertice;
+
+    if (verticeImpl == NULL) {
+        return 0.0f;
+    }
+
+    return verticeImpl->y;
 }
 
 Aresta insereAresta(Grafo grafo, Vertice v1, Vertice v2) {

@@ -51,11 +51,35 @@ void liberaGrafo(Grafo grafo);
 /**
  * @brief Insere informações em um vértice
  * @param grafo Grafo em que vértice terá sua informação colocada
- * @param id Identificador do vértice 
+ * @param id Identificador textual do vértice
  * @param x Coordenada x do vértice
  * @param y Coordenada y do vértice
  */
-Vertice infoVertice(Grafo grafo,int id, float x, float y);
+Vertice infoVertice(Grafo grafo, const char *id, float x, float y);
+
+/**
+ * @brief Retorna o identificador textual de um vértice
+ *
+ * @param vertice Vértice desejado
+ * @return Identificador do vértice ou NULL se o parâmetro for inválido
+ */
+char* getIdVertice(Vertice vertice);
+
+/**
+ * @brief Retorna a coordenada x de um vértice
+ *
+ * @param vertice Vértice desejado
+ * @return Coordenada x do vértice
+ */
+float getXVertice(Vertice vertice);
+
+/**
+ * @brief Retorna a coordenada y de um vértice
+ *
+ * @param vertice Vértice desejado
+ * @return Coordenada y do vértice
+ */
+float getYVertice(Vertice vertice);
 
 /**
  * @brief Insere uma aresta em um grafo tendo como referência dois vértices
