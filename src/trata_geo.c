@@ -8,6 +8,7 @@
 
 #define TAMANHO_CEP 128
 #define TAMANHO_COR 128
+#define MARGEM_SVG 20.0f
 
 typedef struct {
     float espessuraBorda;
@@ -28,14 +29,33 @@ typedef struct {
     bool sucesso;
 } ContextoSvg;
 
+static bool leEspessuraBorda(const char *texto, float *espessura) {
+    char *fim;
+    float valor;
+
+    if (texto == NULL || espessura == NULL) {
+        return false;
+    }
+
+    valor = strtof(texto, &fim);
+    if (fim == texto || valor < 0.0f ||
+        (*fim != '\0' && strcmp(fim, "px") != 0)) {
+        return false;
+    }
+
+    *espessura = valor;
+    return true;
+}
+
 static bool processaComandoCq(const char *linha, EstiloQuadra *estilo) {
     float espessura;
+    char espessuraTexto[64];
     char preenchimento[TAMANHO_COR];
     char borda[TAMANHO_COR];
 
-    if (sscanf(linha, " cq %f %127s %127s",
-               &espessura, preenchimento, borda) != 3 ||
-        espessura < 0.0f) {
+    if (sscanf(linha, " cq %63s %127s %127s",
+               espessuraTexto, preenchimento, borda) != 3 ||
+        !leEspessuraBorda(espessuraTexto, &espessura)) {
         return false;
     }
 
@@ -147,18 +167,20 @@ static void escreveQuadraSvg(const char *chave, void *valor, void *extra) {
     }
 
     if (fprintf(contexto->arquivo,
-                "  <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" "
+                "  <rect id=\"%s\" x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" "
                 "height=\"%.2f\" fill=\"%s\" stroke=\"%s\" "
-                "stroke-width=\"%.2f\" />\n"
-                "  <text x=\"%.2f\" y=\"%.2f\" font-size=\"10\" "
-                "fill=\"black\">%s</text>\n",
+                "fill-opacity=\"0.8\" stroke-width=\"%.2f\" />\n"
+                "  <text x=\"%.2f\" y=\"%.2f\" fill=\"%s\" "
+                "stroke=\"black\" font-size=\"12\">%s</text>\n",
+                getCepQuadra(quadra),
                 getXQuadra(quadra), getYQuadra(quadra),
                 getLarguraQuadra(quadra), getAlturaQuadra(quadra),
                 getCorPreenchimentoQuadra(quadra),
                 getCorBordaQuadra(quadra),
                 getEspessuraBordaQuadra(quadra),
-                getXQuadra(quadra) + 2.0f,
-                getYQuadra(quadra) + 12.0f,
+                getXQuadra(quadra) + 5.0f,
+                getYQuadra(quadra) + 9.0f,
+                getCorBordaQuadra(quadra),
                 getCepQuadra(quadra)) < 0) {
         contexto->sucesso = false;
     }
@@ -180,8 +202,8 @@ static bool geraSvgInicial(HashTable quadras, const char *caminhoSvg) {
         limites.maxY = 1.0f;
     }
 
-    largura = limites.maxX - limites.minX;
-    altura = limites.maxY - limites.minY;
+    largura = limites.maxX - limites.minX + 2.0f * MARGEM_SVG;
+    altura = limites.maxY - limites.minY + 2.0f * MARGEM_SVG;
 
     arquivo = fopen(caminhoSvg, "w");
     if (arquivo == NULL) {
@@ -193,7 +215,9 @@ static bool geraSvgInicial(HashTable quadras, const char *caminhoSvg) {
         fprintf(arquivo,
                 "<svg xmlns=\"http://www.w3.org/2000/svg\" "
                 "viewBox=\"%.2f %.2f %.2f %.2f\">\n",
-                limites.minX, limites.minY, largura, altura) >= 0;
+                limites.minX - MARGEM_SVG,
+                limites.minY - MARGEM_SVG,
+                largura, altura) >= 0;
 
     percorreHashTable(quadras, escreveQuadraSvg, &contexto);
 
